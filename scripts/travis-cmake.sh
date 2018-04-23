@@ -30,10 +30,12 @@ cd build
 BUILD_DIR=$(pwd)
 COMMON_CMAKE_ARGS="-DENABLE_TESTING:BOOL=ON -DLIT_ARGS:STRING=-v"
 
+# install boost, except for NO_BOOST
+[ "$STP_CONFIG" == NO_BOOST ] || eval sudo apt-get install -y libboost-all-dev
+
 # Note eval is needed so COMMON_CMAKE_ARGS is expanded properly
 case $STP_CONFIG in
     COVERAGE)
-        eval sudo apt-get install -y libboost-all-dev
         eval cmake ${COMMON_CMAKE_ARGS} \
                     -DCOVERAGE:BOOL=ON \
                    ${SOURCE_DIR}
@@ -42,20 +44,17 @@ case $STP_CONFIG in
     INTREE_BUILD)
         cd ..
         SOURCE_DIR="."
-        eval sudo apt-get install -y libboost-all-dev
         eval cmake ${COMMON_CMAKE_ARGS} \
                    ${SOURCE_DIR}
 
     ;;
 
     NORM)
-        eval sudo apt-get install -y libboost-all-dev
         eval cmake ${COMMON_CMAKE_ARGS} \
                    ${SOURCE_DIR}
     ;;
 
     RELEASE)
-        eval sudo apt-get install -y libboost-all-dev
         eval cmake ${COMMON_CMAKE_ARGS} \
                    -DENABLE_ASSERTIONS:BOOL=OFF \
                    -DCMAKE_BUILD_TYPE:STRING=Release \
@@ -63,7 +62,6 @@ case $STP_CONFIG in
     ;;
 
     KLEE)
-        eval sudo apt-get install -y libboost-all-dev
         eval cmake ${COMMON_CMAKE_ARGS} \
                    -DSTATICCOMPILE:BOOL=ON \
                    ${SOURCE_DIR}
@@ -79,7 +77,6 @@ case $STP_CONFIG in
          pwd
          ls
 
-         eval sudo apt-get install -y libboost-all-dev
          wget https://bitbucket.org/malb/m4ri/downloads/m4ri-20140914.tar.gz
          tar xzvf m4ri-20140914.tar.gz
          cd m4ri-20140914/
